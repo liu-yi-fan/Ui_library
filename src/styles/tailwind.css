@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+@theme {
+  --radius-video-panel: 0.75rem;
+}
