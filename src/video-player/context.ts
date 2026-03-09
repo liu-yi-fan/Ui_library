@@ -7,7 +7,7 @@ export interface VideoContextValue {
   duration: number
   togglePlay: () => void
   seek: (time: number) => void
-  videoRef: React.RefObject<HTMLVideoElement>
+  videoRef: React.RefObject<HTMLVideoElement | null>
 }
 
 export const VideoContext = createContext<VideoContextValue | null>(null)

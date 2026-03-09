@@ -1,14 +1,14 @@
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { VideoContext } from "./context"
 import { VideoPanel } from "./components/VideoPanel"
+import { ControlBar } from "./components/ControlBar"
 
-export interface VideoPlayerProps {
+interface Props {
   src: string
-  children?: React.ReactNode
 }
 
-export const VideoPlayer = ({ src, children }: VideoPlayerProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null as any)
+export function VideoPlayer({ src }: Props) {
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -28,11 +28,27 @@ export const VideoPlayer = ({ src, children }: VideoPlayerProps) => {
   }
 
   const seek = (time: number) => {
-    if (videoRef.current) {
-      videoRef.current.currentTime = time
-      setCurrentTime(time)
-    }
+    const video = videoRef.current
+    if (!video) return
+    video.currentTime = time
+    setCurrentTime(time)
   }
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const onTimeUpdate = () => setCurrentTime(video.currentTime)
+    const onLoaded = () => setDuration(video.duration)
+
+    video.addEventListener("timeupdate", onTimeUpdate)
+    video.addEventListener("loadedmetadata", onLoaded)
+
+    return () => {
+      video.removeEventListener("timeupdate", onTimeUpdate)
+      video.removeEventListener("loadedmetadata", onLoaded)
+    }
+  }, [])
 
   return (
     <VideoContext.Provider
@@ -45,18 +61,10 @@ export const VideoPlayer = ({ src, children }: VideoPlayerProps) => {
         videoRef,
       }}
     >
-      <VideoPanel
-        ref={videoRef}
-        src={src}
-        onTimeUpdate={() =>
-          setCurrentTime(videoRef.current?.currentTime ?? 0)
-        }
-        onLoadedMetadata={() =>
-          setDuration(videoRef.current?.duration ?? 0)
-        }
-      />
-
-      {children}
+      <div className="space-y-2">
+        <VideoPanel ref={videoRef} src={src} />
+        <ControlBar />
+      </div>
     </VideoContext.Provider>
   )
 }

@@ -1,23 +1,16 @@
 import React from "react"
+import { useVideoPlayer } from "../context"
 
-export interface PlayButtonProps {
-  isPlaying: boolean
-  onToggle: () => void
-  size?: number
-  color?: string
-  className?: string
-}
 
-const PlayButton: React.FC<PlayButtonProps> = ({
-  isPlaying,
-  onToggle,
-  size = 36,
-  color = "#ffffff",
-  className = "",
-}) => {
+const PlayButton = () => {
+  const { isPlaying, togglePlay } = useVideoPlayer()
+  const size = 36
+  const color = "#ffffff"
+  const className = "play-button"
+
   return (
     <button
-      onClick={onToggle}
+      onClick={togglePlay}
       className={className}
       style={{
         width: size,
