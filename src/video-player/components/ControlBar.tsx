@@ -1,12 +1,16 @@
-import  PlayButton  from "./PlayButton"
-import  {Timeline}  from "./Timeline"
+import PlayButton from "./PlayButton"
+import { Timeline, type TimelineSegment } from "./Timeline"
 import { TimeDisplay } from "./TimeDisplay"
 
-export function ControlBar() {
+interface ControlBarProps {
+  segments: TimelineSegment[]
+}
+
+export function ControlBar({ segments }: ControlBarProps) {
   return (
     <div className="flex items-center gap-3">
       <PlayButton />
-      <Timeline />
+      <Timeline segments={segments} />
       <TimeDisplay />
     </div>
   )

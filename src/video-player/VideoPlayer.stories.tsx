@@ -1,75 +1,87 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { VideoPlayer } from './VideoPlayer'
+import type { Meta, StoryObj } from "@storybook/react"
+import { VideoPlayer } from "./VideoPlayer"
 
-// 範例影片來源 - 使用免費的測試影片
 const SAMPLE_VIDEO = {
-  mp4: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-  webm: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm",
+  videoId: "cam01_clip",
+  src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  durationMs: 5000,
+  segments: [
+    {
+      id: "seg1",
+      startMs: 200,
+      endMs: 700,
+      detType: "person",
+    },
+    {
+      id: "seg2",
+      startMs: 1200,
+      endMs: 1800,
+      detType: "vehicle",
+    },
+    {
+      id: "seg3",
+      startMs: 3200,
+      endMs: 4100,
+      detType: "person",
+    },
+  ],
 }
 
-const meta: Meta<typeof VideoPlayer> = {
-  title: 'VideoPlayer/VideoPlayer',
+const meta = {
+  title: "VideoPlayer/VideoPlayer",
   component: VideoPlayer,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
+    videoId: {
+      control: "text",
+    },
     src: {
-      control: 'text',
-      description: '影片來源網址',
+      control: "text",
     },
-  },
-}
-
-export default meta
-type Story = StoryObj<typeof VideoPlayer>
-
-// 基本範例 - 使用 MP4 影片
-export const Default: Story = {
-  args: {
-    src: SAMPLE_VIDEO.mp4,
-  },
-}
-
-// 使用 WebM 格式
-export const WebMFormat: Story = {
-  args: {
-    src: SAMPLE_VIDEO.webm,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: '使用 WebM 格式的影片',
-      },
+    durationMs: {
+      control: "number",
     },
-  },
-}
-
-// 自訂影片來源
-export const CustomVideo: Story = {
-  args: {
-    src: "https://example.com/your-video.mp4", // 替換成你的影片網址
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: '使用自訂的影片來源',
-      },
+    segments: {
+      control: "object",
     },
-  },
-}
-
-// 如果影片需要特定的尺寸設定，可以在 decorator 中調整
-export const WithCustomSize: Story = {
-  args: {
-    src: SAMPLE_VIDEO.mp4,
   },
   decorators: [
     (Story) => (
-      <div style={{ width: '800px' }}>
+      <div style={{ width: 800 }}>
         <Story />
       </div>
     ),
   ],
+} satisfies Meta<typeof VideoPlayer>
+
+export default meta
+
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
+  args: SAMPLE_VIDEO,
+}
+
+export const NoSegments: Story = {
+  args: {
+    ...SAMPLE_VIDEO,
+    segments: [],
+  },
+}
+
+export const DenseTimeline: Story = {
+  args: {
+    ...SAMPLE_VIDEO,
+    segments: [
+      { id: "seg1", startMs: 100, endMs: 300, detType: "person" },
+      { id: "seg2", startMs: 500, endMs: 900, detType: "vehicle" },
+      { id: "seg3", startMs: 1000, endMs: 1300, detType: "person" },
+      { id: "seg4", startMs: 1700, endMs: 2100, detType: "vehicle" },
+      { id: "seg5", startMs: 2500, endMs: 2900, detType: "person" },
+      { id: "seg6", startMs: 3400, endMs: 3900, detType: "vehicle" },
+    ],
+  },
 }

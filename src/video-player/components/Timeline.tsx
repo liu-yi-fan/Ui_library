@@ -1,9 +1,21 @@
 import { useRef } from "react"
 import { useVideoPlayer } from "../context"
 
-export function Timeline() {
+export type TimelineSegment = {
+  id: string
+  startMs: number
+  endMs: number
+  detType: string
+}
+
+export interface TimelineProps {
+  segments: TimelineSegment[]
+}
+
+export function Timeline({ segments }: TimelineProps) {
   const { currentTime, duration, seek } = useVideoPlayer()
   const ref = useRef<HTMLDivElement>(null)
+  const durationMs = duration ? duration * 1000 : 0 
 
   const handleClick = (e: React.MouseEvent) => {
     if (!ref.current || !duration) return
@@ -18,14 +30,34 @@ export function Timeline() {
     <div
       ref={ref}
       onClick={handleClick}
-      className="flex-1 h-2 bg-zinc-700 rounded cursor-pointer"
+      className="flex-1 h-2 bg-zinc-700 rounded cursor-pointer relative"
     >
       <div
-        className="h-full bg-amber-600 rounded relative"
+        className="h-full bg-white/50 rounded"
         style={{ width: `${percent}%` }}
-      >
-      <div className="rounded-full w-3 h-3 bg-rose-600 absolute top-1/2 -translate-y-1/2 -translate-x-1/2" style={{ left: `${percent}%` }} />
-      </div>
+      />
+      {/* Render segments */}
+      {segments.map((segment) => {
+        if (!durationMs) return null
+
+        const startPercent = (segment.startMs / durationMs) * 100
+        const endPercent = (segment.endMs / durationMs) * 100
+        const widthPercent = endPercent - startPercent
+
+        return (
+          <div
+            key={segment.id}
+            className="absolute top-1/2 -translate-y-1/2 h-2 rounded"
+            style={{
+              left: `${startPercent}%`,
+              width: `${widthPercent}%`,
+              backgroundColor: segment.detType === "person" ? "blue" : "red"
+            }}
+          />
+        )
+      })}
+      
+      <div className="rounded-full w-3 h-3 bg-slate-500 absolute top-1/2 -translate-y-1/2 -translate-x-1/2" style={{ left: `${percent}%` }} />
     </div>
   )
 }

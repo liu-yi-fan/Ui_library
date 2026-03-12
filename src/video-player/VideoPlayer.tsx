@@ -2,12 +2,16 @@ import { useRef, useState, useEffect } from "react"
 import { VideoContext } from "./context"
 import { VideoPanel } from "./components/VideoPanel"
 import { ControlBar } from "./components/ControlBar"
+import type { TimelineSegment } from "./components/Timeline"
 
 interface Props {
+  videoId: string
   src: string
+  durationMs: number
+  segments: TimelineSegment[]
 }
 
-export function VideoPlayer({ src }: Props) {
+export function VideoPlayer({ src, videoId, durationMs, segments }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const [isPlaying, setIsPlaying] = useState(false)
@@ -63,7 +67,7 @@ export function VideoPlayer({ src }: Props) {
     >
       <div className="space-y-2">
         <VideoPanel ref={videoRef} src={src} />
-        <ControlBar />
+        <ControlBar segments={segments} />
       </div>
     </VideoContext.Provider>
   )
