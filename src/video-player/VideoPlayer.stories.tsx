@@ -27,6 +27,14 @@ const SAMPLE_VIDEO = {
   ],
 }
 
+const SAMPLE_STATS = {
+  videoId: "cam01_clip",
+  src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  durationMs: 600000,
+  bucketSizeMs: 5000,
+  activity: [0, 2, 5, 3, 8, 1, 0, 0, 4, 6],
+}
+
 const meta = {
   title: "VideoPlayer/VideoPlayer",
   component: VideoPlayer,
@@ -83,5 +91,14 @@ export const DenseTimeline: Story = {
       { id: "seg5", startMs: 2500, endMs: 2900, detType: "person" },
       { id: "seg6", startMs: 3400, endMs: 3900, detType: "vehicle" },
     ],
+  },
+}
+
+export const WithActivity: Story = {
+  args: {
+    ...SAMPLE_VIDEO,
+    activity: {
+      activity: SAMPLE_STATS.activity,
+    },
   },
 }

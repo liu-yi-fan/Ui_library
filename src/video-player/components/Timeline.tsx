@@ -9,7 +9,7 @@ export type TimelineSegment = {
 }
 
 export interface TimelineProps {
-  segments: TimelineSegment[]
+  segments?: TimelineSegment[]
 }
 
 export function Timeline({ segments }: TimelineProps) {
@@ -30,14 +30,14 @@ export function Timeline({ segments }: TimelineProps) {
     <div
       ref={ref}
       onClick={handleClick}
-      className="flex-1 h-2 bg-zinc-700 rounded cursor-pointer relative"
+      className="h-2 bg-zinc-700 rounded cursor-pointer relative"
     >
       <div
         className="h-full bg-white/50 rounded"
         style={{ width: `${percent}%` }}
       />
       {/* Render segments */}
-      {segments.map((segment) => {
+      {segments?.map((segment) => {
         if (!durationMs) return null
 
         const startPercent = (segment.startMs / durationMs) * 100

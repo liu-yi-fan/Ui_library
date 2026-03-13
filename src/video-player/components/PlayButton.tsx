@@ -5,7 +5,7 @@ import { useVideoPlayer } from "../context"
 const PlayButton = () => {
   const { isPlaying, togglePlay } = useVideoPlayer()
   const size = 36
-  const color = "#ffffff"
+  const color = "#3f3f47"
   const className = "play-button"
 
   return (
@@ -21,7 +21,7 @@ const PlayButton = () => {
         borderRadius: "50%",
         border: "none",
         cursor: "pointer",
-        background: "rgba(0,0,0,0.5)",
+        // background: "rgba(0,0,0,0.5)",
       }}
     >
       {isPlaying ? (
