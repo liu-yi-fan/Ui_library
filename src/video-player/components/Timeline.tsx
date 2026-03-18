@@ -1,11 +1,13 @@
 import { useRef } from "react"
 import { useVideoPlayer } from "../context"
+import { PopOver, PopOverContent, PopOverTrigger } from "@/pop-over"
 
 export type TimelineSegment = {
   id: string
   startMs: number
   endMs: number
   detType: string
+  snapdshot?: string
 }
 
 export interface TimelineProps {
@@ -45,14 +47,34 @@ export function Timeline({ segments }: TimelineProps) {
         const widthPercent = endPercent - startPercent
 
         return (
-          <div
+          <PopOver
             key={segment.id}
-            className="absolute top-1/2 -translate-y-1/2 h-2 rounded"
+            className="absolute top-1/2 -translate-y-1/2 h-2"
             style={{
               left: `${startPercent}%`,
               width: `${widthPercent}%`,
-              backgroundColor: segment.detType === "person" ? "blue" : "red"
             }}
+            content={
+              <PopOverContent>
+                <div className="space-y-2 flex flex-col items-center w-28">
+                  <h3 className="font-medium text-zinc-900">Time: {segment.startMs / 1000}s - {segment.endMs / 1000}s</h3>
+                  {segment.snapdshot && (
+                    <img src={segment.snapdshot} alt="Snapshot" className="max-w-12 h-auto rounded" />
+                  )}
+                 
+                </div>
+              </PopOverContent>
+            }
+            trigger={
+              <PopOverTrigger asChild>
+                <div
+                  className="h-full w-full rounded"
+                  style={{
+                    backgroundColor: segment.detType === "person" ? "#717d93" : "#7090ab",
+                  }}
+                />
+              </PopOverTrigger>
+            }
           />
         )
       })}

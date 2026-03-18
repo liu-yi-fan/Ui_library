@@ -33,7 +33,7 @@ export default function ActivityGraph({ data, height = 40 }: Props) {
       <path
         d={path}
         fill="none"
-        stroke="rgb(59,130,246)"
+        stroke="#d4dec7"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

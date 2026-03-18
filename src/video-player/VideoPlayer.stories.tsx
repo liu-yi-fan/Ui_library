@@ -5,26 +5,6 @@ const SAMPLE_VIDEO = {
   videoId: "cam01_clip",
   src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
   durationMs: 5000,
-  segments: [
-    {
-      id: "seg1",
-      startMs: 200,
-      endMs: 700,
-      detType: "person",
-    },
-    {
-      id: "seg2",
-      startMs: 1200,
-      endMs: 1800,
-      detType: "vehicle",
-    },
-    {
-      id: "seg3",
-      startMs: 3200,
-      endMs: 4100,
-      detType: "person",
-    },
-  ],
 }
 
 const SAMPLE_STATS = {
@@ -73,13 +53,6 @@ export const Default: Story = {
   args: SAMPLE_VIDEO,
 }
 
-export const NoSegments: Story = {
-  args: {
-    ...SAMPLE_VIDEO,
-    segments: [],
-  },
-}
-
 export const DenseTimeline: Story = {
   args: {
     ...SAMPLE_VIDEO,
@@ -97,6 +70,20 @@ export const DenseTimeline: Story = {
 export const WithActivity: Story = {
   args: {
     ...SAMPLE_VIDEO,
+    activity: {
+      activity: SAMPLE_STATS.activity,
+    },
+  },
+}
+
+export const WithBoth: Story = {
+  args: {
+    ...SAMPLE_VIDEO,
+    segments: [
+      { id: "seg1", startMs: 100, endMs: 300, detType: "person", snapdshot: "https://miro.medium.com/v2/resize:fit:1400/1*C5z2ZJ3kGDXn2rA7Yi3Y1A.png" },
+      { id: "seg2", startMs: 500, endMs: 900, detType: "vehicle", snapdshot: "https://miro.medium.com/v2/resize:fit:1400/1*C5z2ZJ3kGDXn2rA7Yi3Y1A.png" },
+      { id: "seg3", startMs: 1000, endMs: 1300, detType: "person", snapdshot: "https://miro.medium.com/v2/resize:fit:1400/1*C5z2ZJ3kGDXn2rA7Yi3Y1A.png" }
+    ],
     activity: {
       activity: SAMPLE_STATS.activity,
     },

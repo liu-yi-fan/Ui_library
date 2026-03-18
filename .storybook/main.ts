@@ -1,4 +1,7 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import { mergeConfig } from 'vite';
+
+const srcPath = new URL('../src', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
 
 const config: StorybookConfig = {
   "stories": [
@@ -12,6 +15,15 @@ const config: StorybookConfig = {
     "@storybook/addon-docs",
     "@storybook/addon-onboarding"
   ],
-  "framework": "@storybook/react-vite"
+  "framework": "@storybook/react-vite",
+  async viteFinal(config) {
+    return mergeConfig(config, {
+      resolve: {
+        alias: {
+          '@': srcPath,
+        },
+      },
+    });
+  },
 };
 export default config;
