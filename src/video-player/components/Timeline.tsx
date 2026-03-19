@@ -12,9 +12,10 @@ export type TimelineSegment = {
 
 export interface TimelineProps {
   segments?: TimelineSegment[]
+  showSegmentPopover?: boolean
 }
 
-export function Timeline({ segments }: TimelineProps) {
+export function Timeline({ segments, showSegmentPopover = true }: TimelineProps) {
   const { currentTime, duration, seek } = useVideoPlayer()
   const ref = useRef<HTMLDivElement>(null)
   const durationMs = duration ? duration * 1000 : 0 
@@ -49,6 +50,7 @@ export function Timeline({ segments }: TimelineProps) {
         return (
           <PopOver
             key={segment.id}
+            open={showSegmentPopover ? undefined : false}
             className="absolute top-1/2 -translate-y-1/2 h-2"
             style={{
               left: `${startPercent}%`,

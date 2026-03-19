@@ -11,9 +11,10 @@ interface Props {
   durationMs: number
   segments?: TimelineSegment[]
   activity?: ActivityData
+  showSegmentPopover?: boolean
 }
 
-export function VideoPlayer({ src, videoId, durationMs, segments, activity }: Props) {
+export function VideoPlayer({ src, videoId, durationMs, segments, activity, showSegmentPopover = true }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
   const [isPlaying, setIsPlaying] = useState(false)
@@ -69,7 +70,11 @@ export function VideoPlayer({ src, videoId, durationMs, segments, activity }: Pr
     >
       <div className="space-y-2">
         <VideoPanel ref={videoRef} src={src} />
-        <ControlBar segments={segments} activity={activity} />
+        <ControlBar
+          segments={segments}
+          activity={activity}
+          showSegmentPopover={showSegmentPopover}
+        />
       </div>
     </VideoContext.Provider>
   )

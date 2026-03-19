@@ -7,9 +7,10 @@ import { TimeDisplay } from "./TimeDisplay"
 interface ControlBarProps {
   segments?: TimelineSegment[]
   activity?: ActivityData
+  showSegmentPopover?: boolean
 }
 
-export function ControlBar({ segments, activity }: ControlBarProps) {
+export function ControlBar({ segments, activity, showSegmentPopover = true }: ControlBarProps) {
   const timelineAreaRef = useRef<HTMLDivElement>(null)
   const [showActivityGraph, setShowActivityGraph] = useState(false)
 
@@ -45,7 +46,7 @@ export function ControlBar({ segments, activity }: ControlBarProps) {
             <ActivityGraph data={activity} />
           </div>
         ) : null}
-        <Timeline segments={segments} />
+        <Timeline segments={segments} showSegmentPopover={showSegmentPopover} />
       </div>
       <div className="flex flex-row justify-between items-center">
         <PlayButton />

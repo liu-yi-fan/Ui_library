@@ -35,6 +35,9 @@ const meta = {
     segments: {
       control: "object",
     },
+    showSegmentPopover: {
+      control: "boolean",
+    },
   },
   decorators: [
     (Story) => (
@@ -56,6 +59,21 @@ export const Default: Story = {
 export const DenseTimeline: Story = {
   args: {
     ...SAMPLE_VIDEO,
+    segments: [
+      { id: "seg1", startMs: 100, endMs: 300, detType: "person" },
+      { id: "seg2", startMs: 500, endMs: 900, detType: "vehicle" },
+      { id: "seg3", startMs: 1000, endMs: 1300, detType: "person" },
+      { id: "seg4", startMs: 1700, endMs: 2100, detType: "vehicle" },
+      { id: "seg5", startMs: 2500, endMs: 2900, detType: "person" },
+      { id: "seg6", startMs: 3400, endMs: 3900, detType: "vehicle" },
+    ],
+  },
+}
+
+export const SegmentLineOnly: Story = {
+  args: {
+    ...SAMPLE_VIDEO,
+    showSegmentPopover: false,
     segments: [
       { id: "seg1", startMs: 100, endMs: 300, detType: "person" },
       { id: "seg2", startMs: 500, endMs: 900, detType: "vehicle" },
