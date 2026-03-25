@@ -35,6 +35,16 @@ export const FullWidth: Story = {
   },
 }
 
+export const WithIcons: Story = {
+  args: {
+    items: [
+      { label: "", icon: "☀️", primary: true },
+      { label: "Week", icon: "📅" },
+      { label: "Month", icon: "🗓️", iconPosition: "right" },
+    ],
+  },
+}
+
 export const Vertical: Story = {
   args: {
     orientation: "vertical",

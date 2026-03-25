@@ -10,12 +10,16 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   primary?: boolean;
   size?: 'small' | 'medium' | 'large';
   label: string;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 }
 
 export const Button = ({
   primary = false,
   size = 'medium',
   label,
+  icon,
+  iconPosition = 'left',
   className, // 接收外部傳入的 className
   ...props
 }: ButtonProps) => {
@@ -34,7 +38,13 @@ export const Button = ({
       )}
       {...props}
     >
+      {icon && iconPosition === 'left' && (
+        <span className="mr-2 inline-flex items-center">{icon}</span>
+      )}
       {label}
+      {icon && iconPosition === 'right' && (
+        <span className="ml-2 inline-flex items-center">{icon}</span>
+      )}
     </button>
   );
 };
