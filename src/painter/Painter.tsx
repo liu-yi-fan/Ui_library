@@ -1,20 +1,44 @@
-import React from 'react'
-import { ToolBar } from '@/painter/components'
-import { Canvas } from '@/painter/components/Canvas'
-import  Layers  from '@/painter/components/Layers'
-import { usePainterStore } from './painterStore'
+import React, { useRef } from "react";
+import { ToolBar } from "@/painter/components";
+import { Canvas } from "@/painter/components/Canvas";
+import Layers from "@/painter/components/Layers";
+import { usePainterStore } from "./stores/painterStore";
+import { useDrawing } from "@/painter/hooks/useDrawing";
 
-export type ToolBarMode = 'line' | 'polygon' |'square' | 'ellipse' | 'select'
+export type ToolBarMode = "line" | "polygon" | "square" | "ellipse" | "select";
 
 export const Painter = () => {
-  const { setMode } = usePainterStore()
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const {
+    currentMode, // 當前模式
+    setCurrentMode, // 切換模式的方法
+    color,
+    strokeWidth,
+    addShape,
+  } = usePainterStore();
+
+  const handleDrawComplete = (shape: any) => {
+    addShape({
+      id: `${shape.type}-${Date.now()}-${Math.random()}`,
+      type: shape.type,
+      data: shape.data,
+      createdAt: Date.now(),
+    });
+  };
+
+  const drawing = useDrawing({
+    canvasRef,
+    mode: currentMode, // 從 store 來
+    color,
+    strokeWidth,
+    onDrawComplete: handleDrawComplete,
+  });
 
   return (
-    <div className='flex flex-row'>
-      <ToolBar onModeChange={setMode} />
-      <Canvas />
+    <div className="flex flex-row">
+      <ToolBar onModeChange={setCurrentMode} />
+      <Canvas innerRef={canvasRef} />
       <Layers />
     </div>
-  )
-}
-
+  );
+};

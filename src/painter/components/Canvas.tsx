@@ -1,13 +1,21 @@
-import React from 'react'
-import { usePainterStore } from '@/painter/painterStore'
+import React, { useRef } from 'react'
+import { usePainterStore } from '@/painter/stores/painterStore'
 
-export const Canvas = () => {
-  const { mode } = usePainterStore()
+interface CanvasProps {
+  innerRef: React.RefObject<HTMLCanvasElement | null>;
+}
+
+export const Canvas = ({ innerRef }: CanvasProps) => {
+  // 
+  // const { mode } = usePainterStore()
 
   return (
     <div className="flex justify-center items-center">
       <canvas
-        className="border min-h-[320px] "
+        ref={innerRef}
+        width={680}
+        height={400}
+        className="border "
       />
     </div>
   )

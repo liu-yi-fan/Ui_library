@@ -1,3 +1,3 @@
 export { Painter } from './Painter'
-export { usePainterStore } from './painterStore'
+export { usePainterStore } from './stores/painterStore'
 export * from './components'
