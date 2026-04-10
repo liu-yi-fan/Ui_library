@@ -18,6 +18,7 @@ export const Painter = () => {
   } = usePainterStore();
 
   const handleDrawComplete = (shape: any) => {
+    console.log("繪製完成，形狀數據：", shape);
     addShape({
       id: `${shape.type}-${Date.now()}-${Math.random()}`,
       type: shape.type,
@@ -37,7 +38,13 @@ export const Painter = () => {
   return (
     <div className="flex flex-row">
       <ToolBar onModeChange={setCurrentMode} />
-      <Canvas innerRef={canvasRef} />
+      <Canvas
+        innerRef={canvasRef}
+        onMouseDown={drawing.handleMouseDown}
+        onMouseMove={drawing.handleMouseMove}
+        onMouseUp={drawing.handleMouseUp}
+        cursor={drawing.cursor}
+      />
       <Layers />
     </div>
   );

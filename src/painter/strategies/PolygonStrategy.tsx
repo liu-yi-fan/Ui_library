@@ -30,14 +30,13 @@ export class PolygonStrategy implements DrawingStrategy {
   private tempPoint: Point | null = null  // 當前滑鼠位置（用於預覽）
   
   // 配置參數
-  private snapDistance = 15      // 自動封閉的距離（像素）
+  private snapDistance = 1      // 自動封閉的距離（像素）
   private minPoints = 3          // 最少需要幾個點才能完成
   
   /**
    * 開始繪製或新增頂點
    */
   onStart(point: Point, context: DrawingContext) {
-    console.log('PolygonStrategy.onStart', { state: this.state, point })
     
     switch (this.state) {
       case PolygonState.IDLE:
@@ -45,7 +44,6 @@ export class PolygonStrategy implements DrawingStrategy {
         this.isDrawing = true
         this.state = PolygonState.DRAWING
         this.points = [point]
-        console.log('多邊形繪製開始，第一個點:', point)
         break
         
       case PolygonState.DRAWING:
@@ -63,6 +61,7 @@ export class PolygonStrategy implements DrawingStrategy {
         
       case PolygonState.CLOSING:
         // 正在封閉狀態，點擊完成
+        console.log('完成多邊形（CLOSING 狀態）')
         this.completePolygon(context)
         break
     }
@@ -80,6 +79,7 @@ export class PolygonStrategy implements DrawingStrategy {
     // 檢查是否靠近起始點（更新遊標狀態）
     const isNearStart = this.isNearStartPoint(point)
     this.state = isNearStart ? PolygonState.CLOSING : PolygonState.DRAWING
+    // console.log("this.state:", this.state, { isNearStart })
     
     // 在臨時 canvas 上繪製預覽
     if (tempCanvas) {
@@ -149,7 +149,7 @@ export class PolygonStrategy implements DrawingStrategy {
       point.x - firstPoint.x,
       point.y - firstPoint.y
     )
-    
+    // console.log("distance to start point:", distance)
     return distance < this.snapDistance
   }
   
@@ -215,11 +215,11 @@ export class PolygonStrategy implements DrawingStrategy {
     
     ctx.save()
     ctx.beginPath()
-    ctx.strokeStyle = context.color
-    ctx.fillStyle = `${context.color}40`  // 半透明填充
+    ctx.strokeStyle = "#9E7A7A"
+    ctx.fillStyle = `${context.color}`  // 半透明填充
     ctx.lineWidth = context.strokeWidth
     ctx.setLineDash([5, 5])  // 虛線表示正在繪製
-    
+    // console.log('drawPreview', { points: this.points, tempPoint: this.tempPoint })
     // 繪製已確定的邊
     if (this.points.length > 0) {
       ctx.beginPath()
@@ -229,15 +229,11 @@ export class PolygonStrategy implements DrawingStrategy {
         ctx.lineTo(this.points[i].x, this.points[i].y)
       }
       
-      // 如果有臨時點，畫到臨時點
-      if (this.tempPoint) {
-        ctx.lineTo(this.tempPoint.x, this.tempPoint.y)
-      }
-      
       ctx.stroke()
       
       // 如果點數 >= 3，顯示半透明填充預覽
       if (this.points.length >= 3 && this.tempPoint) {
+        ctx.closePath();
         ctx.fill()
       }
     }

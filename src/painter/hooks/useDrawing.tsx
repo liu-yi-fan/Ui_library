@@ -66,11 +66,12 @@ export function useDrawing({
     if (!canvasRef.current) return
     
     const tempCanvas = document.createElement('canvas')
+    
     tempCanvas.width = canvasRef.current.width
     tempCanvas.height = canvasRef.current.height
     tempCanvas.style.position = 'absolute'
-    tempCanvas.style.top = '0'
-    tempCanvas.style.left = '0'
+    tempCanvas.style.top = '10px' // 根據實際情況調整位置
+    tempCanvas.style.left = '72px' // 根據實際情況調整位置
     tempCanvas.style.pointerEvents = 'none'
     tempCanvasRef.current = tempCanvas
     
@@ -85,12 +86,12 @@ export function useDrawing({
     if (!canvas) return null
     
     const rect = canvas.getBoundingClientRect()
-    const scaleX = canvas.width / rect.width
-    const scaleY = canvas.height / rect.height
-    
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width)
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height)
+
     return {
-      x: (e.clientX - rect.left) * scaleX,
-      y: (e.clientY - rect.top) * scaleY
+      x: x,
+      y: y
     }
   }, [canvasRef])
   
@@ -102,7 +103,7 @@ export function useDrawing({
     if (!point) return
     
     strategy.onStart(point, drawingContext)
-    
+    strategy.isDrawing = true
     // 添加臨時 canvas
     if (tempCanvasRef.current && canvasRef.current?.parentNode) {
       canvasRef.current.parentNode.appendChild(tempCanvasRef.current)
@@ -111,21 +112,23 @@ export function useDrawing({
   
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!strategy || !strategy.isDrawing) return
-    
+    // console.log('handleMouseMove', { strategyName: strategy.name })
     const point = getCanvasCoordinates(e)
     if (!point) return
-    
+    // console.log('handleMouseMove', { point })
     // 清除臨時 canvas
-    if (tempCanvasRef.current) {
-      const ctx = tempCanvasRef.current.getContext('2d')
-      ctx?.clearRect(0, 0, tempCanvasRef.current.width, tempCanvasRef.current.height)
-    }
+    // if (tempCanvasRef.current) {
+    //   const ctx = tempCanvasRef.current.getContext('2d')
+    //   ctx?.clearRect(0, 0, tempCanvasRef.current.width, tempCanvasRef.current.height)
+    // }
     
     strategy.onMove(point, drawingContext, tempCanvasRef.current || undefined)
   }, [strategy, getCanvasCoordinates, drawingContext])
   
   const handleMouseUp = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!strategy || !strategy.isDrawing) return
+    if (!strategy || strategy.isDrawing) return
+
+    // if (strategy.name === 'polygon') return
     
     const point = getCanvasCoordinates(e)
     strategy.onEnd(point, drawingContext)

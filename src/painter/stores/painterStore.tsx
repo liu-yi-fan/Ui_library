@@ -36,6 +36,7 @@ export const usePainterStore = create<PainterState>((set) => ({
   setColor: (color) => set({ color }),
   setStrokeWidth: (strokeWidth) => set({ strokeWidth }),
   addShape: (shape) => {
+    // todo
     // 添加形狀邏輯
   },
 }));
