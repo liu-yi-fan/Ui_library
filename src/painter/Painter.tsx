@@ -4,35 +4,40 @@ import { Canvas } from "@/painter/components/Canvas";
 import Layers from "@/painter/components/Layers";
 import { usePainterStore } from "./stores/painterStore";
 import { useDrawing } from "@/painter/hooks/useDrawing";
+import { useCanvasRenderer } from "@/painter/hooks/useCanvasRenderer";
+import { Shape } from "@/painter/stores/painterType";
 
 export type ToolBarMode = "line" | "polygon" | "square" | "ellipse" | "select";
 
 export const Painter = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const {
-    currentMode, // 當前模式
-    setCurrentMode, // 切換模式的方法
+    currentMode,
+    currentLayerId,
+    setCurrentMode,
     color,
     strokeWidth,
+    layers,
     addShape,
   } = usePainterStore();
 
-  const handleDrawComplete = (shape: any) => {
+  const handleDrawComplete = (shape: Shape) => {
     console.log("繪製完成，形狀數據：", shape);
-    addShape({
-      id: `${shape.type}-${Date.now()}-${Math.random()}`,
-      type: shape.type,
-      data: shape.data,
-      createdAt: Date.now(),
-    });
+    addShape(shape);
   };
 
   const drawing = useDrawing({
     canvasRef,
-    mode: currentMode, // 從 store 來
+    mode: currentMode,
+    currentLayerId,
     color,
     strokeWidth,
     onDrawComplete: handleDrawComplete,
+  });
+
+  useCanvasRenderer({
+    canvasRef,
+    layers,
   });
 
   return (

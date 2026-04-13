@@ -1,43 +1,110 @@
 import React from "react";
+import { usePainterStore } from "@/painter/stores/painterStore";
 
 function Layers() {
+  const {
+    layers,
+    currentLayerId,
+    setCurrentLayer,
+    addLayer,
+    toggleLayerVisibility,
+    toggleLayerLock,
+    setLayerOpacity,
+  } = usePainterStore();
+
   return (
-    <div className="min-w-48 bg-gray-200 pl-2 space-y-1">
-      Layers
-      <div className="bg-white p-2 mr-2">
-        <div className="flex flex-row pr-2">
-        <h3>Layer 01</h3>
-        <span>
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M15.0007 12C15.0007 13.6569 13.6576 15 12.0007 15C10.3439 15 9.00073 13.6569 9.00073 12C9.00073 10.3431 10.3439 9 12.0007 9C13.6576 9 15.0007 10.3431 15.0007 12Z"
-              stroke="#000000"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M12.0012 5C7.52354 5 3.73326 7.94288 2.45898 12C3.73324 16.0571 7.52354 19 12.0012 19C16.4788 19 20.2691 16.0571 21.5434 12C20.2691 7.94291 16.4788 5 12.0012 5Z"
-              stroke="#000000"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </span>
-        </div>
-        <label className="flex flex-col space-x-2">
-          <span className="font-light text-sm">Opacity</span>
-          <input type="range" className="w-full" />
-        </label>
+    <aside className="min-w-60 space-y-3 bg-stone-100 p-3">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-stone-700">
+          Layers
+        </h2>
+        <button
+          type="button"
+          onClick={addLayer}
+          className="rounded border border-stone-300 bg-white px-2 py-1 text-xs text-stone-700 hover:bg-stone-50"
+        >
+          New Layer
+        </button>
       </div>
-    </div>
+
+      <div className="space-y-2">
+        {layers.map((layer) => {
+          const isActive = layer.id === currentLayerId;
+
+          return (
+            <button
+              key={layer.id}
+              type="button"
+              onClick={() => setCurrentLayer(layer.id)}
+              className={`block w-full rounded border p-3 text-left transition ${
+                isActive
+                  ? "border-stone-900 bg-white shadow-sm"
+                  : "border-stone-200 bg-stone-50 hover:bg-white"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-sm font-medium text-stone-900">
+                    {layer.name}
+                  </div>
+                  <div className="text-xs text-stone-500">
+                    {layer.shapes.length} shapes
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLayerVisibility(layer.id);
+                    }}
+                    className={`rounded border px-2 py-1 text-xs ${
+                      layer.visible
+                        ? "border-stone-300 bg-white text-stone-700"
+                        : "border-stone-200 bg-stone-200 text-stone-500"
+                    }`}
+                  >
+                    {layer.visible ? "Visible" : "Hidden"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLayerLock(layer.id);
+                    }}
+                    className={`rounded border px-2 py-1 text-xs ${
+                      layer.locked
+                        ? "border-stone-900 bg-stone-900 text-white"
+                        : "border-stone-300 bg-white text-stone-700"
+                    }`}
+                  >
+                    {layer.locked ? "Locked" : "Unlocked"}
+                  </button>
+                </div>
+              </div>
+
+              <label className="mt-3 block">
+                <span className="mb-1 block text-xs text-stone-500">
+                  Opacity {Math.round(layer.opacity * 100)}%
+                </span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={Math.round(layer.opacity * 100)}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    setLayerOpacity(layer.id, Number(e.target.value) / 100);
+                  }}
+                  className="w-full"
+                />
+              </label>
+            </button>
+          );
+        })}
+      </div>
+    </aside>
   );
 }
 
