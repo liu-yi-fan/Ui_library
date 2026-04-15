@@ -17,7 +17,8 @@ export interface DrawingStrategy {
   // 開始繪製（滑鼠按下）
   onStart: (
     point: Point, 
-    context: DrawingContext
+    context: DrawingContext,
+    tempCanvas?: HTMLCanvasElement
   ) => void
   
   // 繪製中（滑鼠移動）

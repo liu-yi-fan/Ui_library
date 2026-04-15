@@ -77,6 +77,13 @@ export function useDrawing({
     };
   }, [canvasRef]);
 
+  useEffect(() => {
+    if (tempCanvasRef.current?.parentNode) {
+        // console.log("移除臨時 canvas");
+        tempCanvasRef.current.parentNode.removeChild(tempCanvasRef.current);
+      }
+  },[drawingContext.onDrawComplete]);
+
   const getCanvasCoordinates = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>): Point | null => {
       const canvas = canvasRef.current;
@@ -98,7 +105,7 @@ export function useDrawing({
       const point = getCanvasCoordinates(e);
       if (!point) return;
 
-      strategy.onStart(point, drawingContext);
+      strategy.onStart(point, drawingContext, tempCanvasRef.current || undefined);
       strategy.isDrawing = true;
 
       if (tempCanvasRef.current && canvasRef.current?.parentNode) {
@@ -111,11 +118,10 @@ export function useDrawing({
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (!strategy || !strategy.isDrawing) return;
+      // const point = getCanvasCoordinates(e);
+      // if (!point) return;
 
-      const point = getCanvasCoordinates(e);
-      if (!point) return;
-
-      strategy.onMove(point, drawingContext, tempCanvasRef.current || undefined);
+      // strategy.onMove(point, drawingContext, tempCanvasRef.current || undefined);
     },
     [strategy, getCanvasCoordinates, drawingContext]
   );
@@ -124,12 +130,12 @@ export function useDrawing({
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (!strategy || strategy.isDrawing) return;
 
-      const point = getCanvasCoordinates(e);
-      strategy.onEnd(point, drawingContext);
+      // const point = getCanvasCoordinates(e);
+      // strategy.onEnd(point, drawingContext);
 
-      if (tempCanvasRef.current?.parentNode) {
-        tempCanvasRef.current.parentNode.removeChild(tempCanvasRef.current);
-      }
+      // if (tempCanvasRef.current?.parentNode) {
+      //   tempCanvasRef.current.parentNode.removeChild(tempCanvasRef.current);
+      // }
     },
     [strategy, getCanvasCoordinates, drawingContext]
   );

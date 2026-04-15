@@ -22,7 +22,6 @@ export const Painter = () => {
   } = usePainterStore();
 
   const handleDrawComplete = (shape: Shape) => {
-    console.log("繪製完成，形狀數據：", shape);
     addShape(shape);
   };
 
