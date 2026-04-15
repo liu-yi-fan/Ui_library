@@ -219,7 +219,7 @@ export class PolygonStrategy implements DrawingStrategy {
 
     ctx.save();
     ctx.beginPath();
-    ctx.strokeStyle = "#9E7A7A";
+    ctx.strokeStyle = context.color;
     ctx.fillStyle = `${context.color}`; // 半透明填充
     ctx.lineWidth = context.strokeWidth;
     ctx.setLineDash([5, 5]); // 虛線表示正在繪製

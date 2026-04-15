@@ -15,6 +15,7 @@ export const Painter = () => {
     currentMode,
     currentLayerId,
     setCurrentMode,
+    setColor,
     color,
     strokeWidth,
     layers,
@@ -41,7 +42,7 @@ export const Painter = () => {
 
   return (
     <div className="flex flex-row">
-      <ToolBar onModeChange={setCurrentMode} />
+      <ToolBar onModeChange={setCurrentMode} onColorChange={setColor}/>
       <Canvas
         innerRef={canvasRef}
         onMouseDown={drawing.handleMouseDown}
