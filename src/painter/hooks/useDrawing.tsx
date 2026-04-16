@@ -4,8 +4,10 @@ import {
   DrawingContext,
   DrawingStrategy,
 } from "@/painter/strategies/DrawingStrategy";
+import { EllipseStrategy } from "@/painter/strategies/EllipseStrategy";
 import { LineStrategy } from "@/painter/strategies/LineStrategy";
 import { PolygonStrategy } from "@/painter/strategies/PolygonStrategy";
+import { SquareStrategy } from "@/painter/strategies/SquareStrategy";
 
 interface UseDrawingProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -46,7 +48,11 @@ export function useDrawing({
         newStrategy = new PolygonStrategy();
         break;
       case "square":
+        newStrategy = new SquareStrategy();
+        break;
       case "ellipse":
+        newStrategy = new EllipseStrategy();
+        break;
       case "select":
         break;
     }
@@ -125,7 +131,12 @@ export function useDrawing({
 
       if (!strategy.isDrawing && tempCanvasRef.current) {
         const ctx = tempCanvasRef.current.getContext("2d");
-        ctx?.clearRect(0, 0, tempCanvasRef.current.width, tempCanvasRef.current.height);
+        ctx?.clearRect(
+          0,
+          0,
+          tempCanvasRef.current.width,
+          tempCanvasRef.current.height
+        );
 
         if (tempCanvasRef.current.parentNode) {
           tempCanvasRef.current.parentNode.removeChild(tempCanvasRef.current);

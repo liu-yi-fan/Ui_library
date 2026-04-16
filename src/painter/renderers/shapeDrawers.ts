@@ -1,4 +1,11 @@
-import { Point, PolygonShape, LineShape, Shape } from "@/painter/stores/painterType";
+import {
+  EllipseShape,
+  LineShape,
+  Point,
+  PolygonShape,
+  RectangleShape,
+  Shape,
+} from "@/painter/stores/painterType";
 
 interface DrawLineOptions {
   start?: Point;
@@ -18,6 +25,24 @@ interface DrawPolygonOptions {
   strokeStyle?: string;
   fillStyle?: string;
   lineWidth?: number;
+  globalAlpha?: number;
+}
+
+interface DrawRectangleOptions {
+  strokeStyle?: string;
+  fillStyle?: string;
+  lineWidth?: number;
+  lineDash?: number[];
+  fill?: boolean;
+  globalAlpha?: number;
+}
+
+interface DrawEllipseOptions {
+  strokeStyle?: string;
+  fillStyle?: string;
+  lineWidth?: number;
+  lineDash?: number[];
+  fill?: boolean;
   globalAlpha?: number;
 }
 
@@ -52,6 +77,110 @@ function tracePolygonPath(
   }
 
   return true;
+}
+
+export function drawLine(
+  ctx: CanvasRenderingContext2D,
+  line: LineShape["data"],
+  {
+    start = line.start,
+    end = line.end,
+    strokeStyle = line.color,
+    lineWidth = line.strokeWidth,
+    lineDash = line.dash ?? [],
+    lineCap = line.lineCap ?? "round",
+    globalAlpha,
+  }: DrawLineOptions = {}
+) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.strokeStyle = strokeStyle;
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = lineCap;
+  ctx.setLineDash(lineDash);
+
+  if (typeof globalAlpha === "number") {
+    ctx.globalAlpha = globalAlpha;
+  }
+
+  ctx.moveTo(start.x, start.y);
+  ctx.lineTo(end.x, end.y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+export function drawSquare(
+  ctx: CanvasRenderingContext2D,
+  rectangle: RectangleShape["data"],
+  {
+    strokeStyle = rectangle.color,
+    fillStyle = rectangle.fillColor ?? rectangle.color,
+    lineWidth = rectangle.strokeWidth,
+    lineDash = [],
+    fill = rectangle.fill ?? false,
+    globalAlpha,
+  }: DrawRectangleOptions = {}
+) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.strokeStyle = strokeStyle;
+  ctx.fillStyle = fillStyle;
+  ctx.lineWidth = lineWidth;
+  ctx.setLineDash(lineDash);
+
+  if (typeof globalAlpha === "number") {
+    ctx.globalAlpha = globalAlpha;
+  }
+
+  ctx.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+
+  if (fill) {
+    ctx.fill();
+  }
+
+  ctx.stroke();
+  ctx.restore();
+}
+
+export function drawEllipse(
+  ctx: CanvasRenderingContext2D,
+  ellipse: EllipseShape["data"],
+  {
+    strokeStyle = ellipse.color,
+    fillStyle = ellipse.fillColor ?? ellipse.color,
+    lineWidth = ellipse.strokeWidth,
+    lineDash = [],
+    fill = ellipse.fill ?? false,
+    globalAlpha,
+  }: DrawEllipseOptions = {}
+) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.strokeStyle = strokeStyle;
+  ctx.fillStyle = fillStyle;
+  ctx.lineWidth = lineWidth;
+  ctx.setLineDash(lineDash);
+
+  if (typeof globalAlpha === "number") {
+    ctx.globalAlpha = globalAlpha;
+  }
+
+  ctx.ellipse(
+    ellipse.x,
+    ellipse.y,
+    ellipse.radiusX,
+    ellipse.radiusY,
+    ellipse.rotation ?? 0,
+    0,
+    Math.PI * 2
+  );
+
+  if (fill) {
+    ctx.fill();
+  }
+
+  ctx.stroke();
+  ctx.restore();
 }
 
 export function drawPolygon(
@@ -90,36 +219,6 @@ export function drawPolygon(
     ctx.fill();
   }
 
-  ctx.stroke();
-  ctx.restore();
-}
-
-export function drawLine(
-  ctx: CanvasRenderingContext2D,
-  line: LineShape["data"],
-  {
-    start = line.start,
-    end = line.end,
-    strokeStyle = line.color,
-    lineWidth = line.strokeWidth,
-    lineDash = line.dash ?? [],
-    lineCap = line.lineCap ?? "round",
-    globalAlpha,
-  }: DrawLineOptions = {}
-) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.strokeStyle = strokeStyle;
-  ctx.lineWidth = lineWidth;
-  ctx.lineCap = lineCap;
-  ctx.setLineDash(lineDash);
-
-  if (typeof globalAlpha === "number") {
-    ctx.globalAlpha = globalAlpha;
-  }
-
-  ctx.moveTo(start.x, start.y);
-  ctx.lineTo(end.x, end.y);
   ctx.stroke();
   ctx.restore();
 }
@@ -180,66 +279,17 @@ export function drawShape(ctx: CanvasRenderingContext2D, shape: Shape) {
   if (shape.visible === false) return;
 
   switch (shape.type) {
-    case "line": 
+    case "line":
       drawLine(ctx, shape.data);
       return;
 
-    case "square": {
-      const {
-        x,
-        y,
-        width,
-        height,
-        color,
-        strokeWidth,
-        fill,
-        fillColor,
-      } = shape.data;
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.lineWidth = strokeWidth;
-      ctx.strokeStyle = color;
-      ctx.rect(x, y, width, height);
-
-      if (fill) {
-        ctx.fillStyle = fillColor ?? color;
-        ctx.fill();
-      }
-
-      ctx.stroke();
-      ctx.restore();
+    case "square":
+      drawSquare(ctx, shape.data);
       return;
-    }
 
-    case "ellipse": {
-      const {
-        x,
-        y,
-        radiusX,
-        radiusY,
-        color,
-        strokeWidth,
-        fill,
-        fillColor,
-        rotation,
-      } = shape.data;
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.lineWidth = strokeWidth;
-      ctx.strokeStyle = color;
-      ctx.ellipse(x, y, radiusX, radiusY, rotation ?? 0, 0, Math.PI * 2);
-
-      if (fill) {
-        ctx.fillStyle = fillColor ?? color;
-        ctx.fill();
-      }
-
-      ctx.stroke();
-      ctx.restore();
+    case "ellipse":
+      drawEllipse(ctx, shape.data);
       return;
-    }
 
     case "polygon":
       drawPolygon(ctx, shape.data);
