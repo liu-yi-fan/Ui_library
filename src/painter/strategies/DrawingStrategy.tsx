@@ -1,45 +1,27 @@
-// strategies/DrawingStrategy.ts
-import { Point } from "@/painter/stores/painterType"
+import { Point, Shape } from "@/painter/stores/painterType";
 
 export interface DrawingContext {
-  color: string
-  strokeWidth: number
-  // brushSize: number
-  currentLayerId: string | null
-  onDrawComplete: (shape: any) => void
-  drawOnCurrentLayer: (data: any) => void
+  color: string;
+  strokeWidth: number;
+  currentLayerId: string | null;
+  onDrawComplete: (shape: Shape) => void;
+  drawOnCurrentLayer: (shape: Shape) => void;
 }
 
 export interface DrawingStrategy {
-  // 策略名稱
-  readonly name: string
-  
-  // 開始繪製（滑鼠按下）
+  readonly name: string;
   onStart: (
-    point: Point, 
+    point: Point,
     context: DrawingContext,
     tempCanvas?: HTMLCanvasElement
-  ) => void
-  
-  // 繪製中（滑鼠移動）
+  ) => void;
   onMove: (
     point: Point,
     context: DrawingContext,
-    tempCanvas?: HTMLCanvasElement  // 用於即時預覽
-  ) => void
-  
-  // 結束繪製（滑鼠放開）
-  onEnd: (
-    point: Point | null,
-    context: DrawingContext
-  ) => void
-  
-  // 取消繪製
-  onCancel: () => void
-  
-  // 獲取遊標樣式
-  getCursor: () => string
-  
-  // 是否正在繪製中
-  isDrawing: boolean
+    tempCanvas?: HTMLCanvasElement
+  ) => void;
+  onEnd: (point: Point | null, context: DrawingContext) => void;
+  onCancel: () => void;
+  getCursor: () => string;
+  isDrawing: boolean;
 }

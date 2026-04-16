@@ -4,6 +4,7 @@ import {
   DrawingContext,
   DrawingStrategy,
 } from "@/painter/strategies/DrawingStrategy";
+import { LineStrategy } from "@/painter/strategies/LineStrategy";
 import { PolygonStrategy } from "@/painter/strategies/PolygonStrategy";
 
 interface UseDrawingProps {
@@ -39,20 +40,14 @@ export function useDrawing({
 
     switch (mode) {
       case "line":
-        console.log("切換到線條工具");
-        break;
-      case "square":
-        console.log("切換到矩形工具");
-        break;
-      case "ellipse":
-        console.log("切換到橢圓工具");
+        newStrategy = new LineStrategy();
         break;
       case "polygon":
-        console.log("切換到多邊形工具");
         newStrategy = new PolygonStrategy();
         break;
+      case "square":
+      case "ellipse":
       case "select":
-        console.log("切換到選擇工具");
         break;
     }
 
@@ -63,7 +58,6 @@ export function useDrawing({
     if (!canvasRef.current) return;
 
     const tempCanvas = document.createElement("canvas");
-
     tempCanvas.width = canvasRef.current.width;
     tempCanvas.height = canvasRef.current.height;
     tempCanvas.style.position = "absolute";
@@ -76,13 +70,6 @@ export function useDrawing({
       tempCanvas.remove();
     };
   }, [canvasRef]);
-
-  useEffect(() => {
-    if (tempCanvasRef.current?.parentNode) {
-        // console.log("移除臨時 canvas");
-        tempCanvasRef.current.parentNode.removeChild(tempCanvasRef.current);
-      }
-  },[drawingContext.onDrawComplete]);
 
   const getCanvasCoordinates = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>): Point | null => {
@@ -118,24 +105,32 @@ export function useDrawing({
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       if (!strategy || !strategy.isDrawing) return;
-      // const point = getCanvasCoordinates(e);
-      // if (!point) return;
 
-      // strategy.onMove(point, drawingContext, tempCanvasRef.current || undefined);
+      const point = getCanvasCoordinates(e);
+      if (!point) return;
+
+      strategy.onMove(point, drawingContext, tempCanvasRef.current || undefined);
     },
     [strategy, getCanvasCoordinates, drawingContext]
   );
 
   const handleMouseUp = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
-      if (!strategy || strategy.isDrawing) return;
+      if (!strategy) return;
 
-      // const point = getCanvasCoordinates(e);
-      // strategy.onEnd(point, drawingContext);
+      if (strategy.isDrawing && strategy.name !== "polygon") {
+        const point = getCanvasCoordinates(e);
+        strategy.onEnd(point, drawingContext);
+      }
 
-      // if (tempCanvasRef.current?.parentNode) {
-      //   tempCanvasRef.current.parentNode.removeChild(tempCanvasRef.current);
-      // }
+      if (!strategy.isDrawing && tempCanvasRef.current) {
+        const ctx = tempCanvasRef.current.getContext("2d");
+        ctx?.clearRect(0, 0, tempCanvasRef.current.width, tempCanvasRef.current.height);
+
+        if (tempCanvasRef.current.parentNode) {
+          tempCanvasRef.current.parentNode.removeChild(tempCanvasRef.current);
+        }
+      }
     },
     [strategy, getCanvasCoordinates, drawingContext]
   );
