@@ -6,6 +6,7 @@ import {
   RectangleShape,
   Shape,
 } from "@/painter/stores/painterType";
+import { ShapeBounds } from "@/painter/utils/shapeSelection";
 
 interface DrawLineOptions {
   start?: Point;
@@ -272,6 +273,23 @@ export function drawPolygonClosingHint(
   ctx.font = "12px Arial";
   ctx.fillStyle = "#ff0000";
   ctx.fillText(label, point.x + 12, point.y - 8);
+  ctx.restore();
+}
+
+export function drawSelectionBounds(
+  ctx: CanvasRenderingContext2D,
+  bounds: ShapeBounds
+) {
+  ctx.save();
+  ctx.setLineDash([6, 4]);
+  ctx.strokeStyle = "#2563eb";
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(
+    bounds.minX,
+    bounds.minY,
+    bounds.maxX - bounds.minX,
+    bounds.maxY - bounds.minY
+  );
   ctx.restore();
 }
 

@@ -14,12 +14,21 @@ export const Painter = () => {
   const {
     currentMode,
     currentLayerId,
+    selectedShapeId,
+    selectedLayerId,
+    draggingShapeId,
+    draggingLayerId,
     setCurrentMode,
     setColor,
+    setSelectedShape,
+    clearSelection,
+    setDraggingShape,
+    clearDraggingShape,
     color,
     strokeWidth,
     layers,
     addShape,
+    updateShape,
   } = usePainterStore();
 
   const handleDrawComplete = (shape: Shape) => {
@@ -30,14 +39,26 @@ export const Painter = () => {
     canvasRef,
     mode: currentMode,
     currentLayerId,
+    layers,
+    selectedShapeId,
+    selectedLayerId,
     color,
     strokeWidth,
     onDrawComplete: handleDrawComplete,
+    setSelectedShape,
+    clearSelection,
+    setDraggingShape,
+    clearDraggingShape,
+    updateShape,
   });
 
   useCanvasRenderer({
     canvasRef,
     layers,
+    selectedShapeId,
+    selectedLayerId,
+    draggingShapeId,
+    draggingLayerId,
   });
 
   return (

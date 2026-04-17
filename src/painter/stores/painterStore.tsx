@@ -5,11 +5,19 @@ import { Layer, Shape } from "@/painter/stores/painterType";
 interface PainterState {
   currentMode: ToolBarMode;
   currentLayerId: string;
+  selectedShapeId: string | null;
+  selectedLayerId: string | null;
+  draggingShapeId: string | null;
+  draggingLayerId: string | null;
   color: string;
   strokeWidth: number;
   layers: Layer[];
   setCurrentMode: (mode: PainterState["currentMode"]) => void;
   setCurrentLayer: (layerId: string) => void;
+  setSelectedShape: (shapeId: string, layerId: string) => void;
+  clearSelection: () => void;
+  setDraggingShape: (shapeId: string, layerId: string) => void;
+  clearDraggingShape: () => void;
   setColor: (color: string) => void;
   setStrokeWidth: (width: number) => void;
   addLayer: () => void;
@@ -17,6 +25,7 @@ interface PainterState {
   toggleLayerLock: (layerId: string) => void;
   setLayerOpacity: (layerId: string, opacity: number) => void;
   addShape: (shape: Shape) => void;
+  updateShape: (layerId: string, shapeId: string, nextShape: Shape) => void;
 }
 
 const initialLayerId = "layer-1";
@@ -39,6 +48,10 @@ function createLayer(index: number): Layer {
 export const usePainterStore = create<PainterState>((set) => ({
   currentMode: "line",
   currentLayerId: initialLayerId,
+  selectedShapeId: null,
+  selectedLayerId: null,
+  draggingShapeId: null,
+  draggingLayerId: null,
   color: "#000000",
   strokeWidth: 2,
   layers: [
@@ -55,6 +68,14 @@ export const usePainterStore = create<PainterState>((set) => ({
   ],
   setCurrentMode: (currentMode) => set({ currentMode }),
   setCurrentLayer: (currentLayerId) => set({ currentLayerId }),
+  setSelectedShape: (selectedShapeId, selectedLayerId) =>
+    set({ selectedShapeId, selectedLayerId }),
+  clearSelection: () =>
+    set({ selectedShapeId: null, selectedLayerId: null }),
+  setDraggingShape: (draggingShapeId, draggingLayerId) =>
+    set({ draggingShapeId, draggingLayerId }),
+  clearDraggingShape: () =>
+    set({ draggingShapeId: null, draggingLayerId: null }),
   setColor: (color) => set({ color }),
   setStrokeWidth: (strokeWidth) => set({ strokeWidth }),
   addLayer: () =>
@@ -128,6 +149,29 @@ export const usePainterStore = create<PainterState>((set) => ({
             : {
                 ...layer,
                 shapes: [...layer.shapes, normalizedShape],
+                updatedAt: timestamp,
+              }
+        ),
+      };
+    }),
+  updateShape: (layerId, shapeId, nextShape) =>
+    set((state) => {
+      const timestamp = Date.now();
+
+      return {
+        layers: state.layers.map((layer) =>
+          layer.id !== layerId
+            ? layer
+            : {
+                ...layer,
+                shapes: layer.shapes.map((shape) =>
+                  shape.id !== shapeId
+                    ? shape
+                    : {
+                        ...nextShape,
+                        updatedAt: timestamp,
+                      }
+                ),
                 updatedAt: timestamp,
               }
         ),

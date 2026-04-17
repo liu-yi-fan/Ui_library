@@ -7,24 +7,42 @@ import {
 import { EllipseStrategy } from "@/painter/strategies/EllipseStrategy";
 import { LineStrategy } from "@/painter/strategies/LineStrategy";
 import { PolygonStrategy } from "@/painter/strategies/PolygonStrategy";
+import { SelectStrategy } from "@/painter/strategies/SelectStrategy";
 import { SquareStrategy } from "@/painter/strategies/SquareStrategy";
+import { Layer } from "@/painter/stores/painterType";
 
 interface UseDrawingProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
   mode: "line" | "polygon" | "square" | "ellipse" | "select";
   currentLayerId: string | null;
+  layers: Layer[];
+  selectedShapeId: string | null;
+  selectedLayerId: string | null;
   color: string;
   strokeWidth: number;
   onDrawComplete: (shape: Shape) => void;
+  setSelectedShape: (shapeId: string, layerId: string) => void;
+  clearSelection: () => void;
+  setDraggingShape: (shapeId: string, layerId: string) => void;
+  clearDraggingShape: () => void;
+  updateShape: (layerId: string, shapeId: string, nextShape: Shape) => void;
 }
 
 export function useDrawing({
   canvasRef,
   mode,
   currentLayerId,
+  layers,
+  selectedShapeId,
+  selectedLayerId,
   color,
   strokeWidth,
   onDrawComplete,
+  setSelectedShape,
+  clearSelection,
+  setDraggingShape,
+  clearDraggingShape,
+  updateShape,
 }: UseDrawingProps) {
   const [strategy, setStrategy] = useState<DrawingStrategy | null>(null);
   const tempCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -33,8 +51,16 @@ export function useDrawing({
     color,
     strokeWidth,
     currentLayerId,
+    layers,
+    selectedShapeId,
+    selectedLayerId,
     onDrawComplete,
     drawOnCurrentLayer: onDrawComplete,
+    setSelectedShape,
+    clearSelection,
+    setDraggingShape,
+    clearDraggingShape,
+    updateShape,
   };
 
   useEffect(() => {
@@ -54,6 +80,7 @@ export function useDrawing({
         newStrategy = new EllipseStrategy();
         break;
       case "select":
+        newStrategy = new SelectStrategy();
         break;
     }
 
@@ -99,7 +126,6 @@ export function useDrawing({
       if (!point) return;
 
       strategy.onStart(point, drawingContext, tempCanvasRef.current || undefined);
-      strategy.isDrawing = true;
 
       if (tempCanvasRef.current && canvasRef.current?.parentNode) {
         canvasRef.current.parentNode.appendChild(tempCanvasRef.current);
